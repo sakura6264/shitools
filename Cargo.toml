@@ -1,0 +1,75 @@
+[package]
+name = "shitools"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+mlua = { version = "*", features = ["luajit", "vendored"] }
+mimalloc = "*"
+eframe = { version = "*", default-features = false, features = [
+    "wgpu",
+    "accesskit",
+] }
+egui_extras = { version = "*", features = ["datepicker", "syntect"] }
+serde = { version = "*", features = ["derive"] }
+serde_json = "*"
+serde_yaml = "*"
+include-flate = "*"
+egui-toast = "*"
+egui_file = "*"
+vtracer = "*"
+visioncortex = "*"
+image = "*"
+uuid = { version = "*", features = [
+    "fast-rng",
+    "v1",
+    "v3",
+    "v4",
+    "v5",
+    "v6",
+    "v7",
+    "v8",
+] }
+rand = "*"
+hex = "*"
+fake = "*"
+chrono = "*"
+urlencoding = "*"
+base64 = "*"
+encoding = "*"
+digest = "*"
+ascon-hash = "*"
+belt-hash = "*"
+blake3 = "*"
+fsb = "*"
+gost94 = "*"
+groestl = "*"
+jh = "*"
+md2 = "*"
+md4 = "*"
+md-5 = "*"
+ripemd = "*"
+sha1 = "*"
+sha2 = "*"
+sha3 = "*"
+shabal = "*"
+sm3 = "*"
+streebog = "*"
+tiger = "*"
+whirlpool = "*"
+file-format = "*"
+egui_json_tree = "*"
+rand_chacha = "*"
+silicon = { version = "*", default-features = false, features = ["anyhow"]}
+syntect = "*"
+
+[build-dependencies]
+embed-resource = "*"
+
+
+[profile.release]
+strip = true
+lto = true
+panic = "abort"
