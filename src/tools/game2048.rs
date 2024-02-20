@@ -10,17 +10,16 @@ pub struct Game2048 {
     cheat_add: usize,
     rng: ChaChaRng,
     msg: Option<Msg>,
-
 }
 
 #[derive(Clone, PartialEq, Eq, Hash)]
-        enum Direction {
-            None,
-            Up,
-            Down,
-            Left,
-            Right,
-        }
+enum Direction {
+    None,
+    Up,
+    Down,
+    Left,
+    Right,
+}
 
 impl Game2048 {
     pub fn new() -> Self {
@@ -153,10 +152,10 @@ impl Game2048 {
         self.board[x][y] = to_add;
     }
     fn random_addable(&mut self) -> usize {
-        let random_num : usize = self.rng.gen();
+        let random_num: usize = self.rng.gen();
         random_num & (!random_num + 1)
     }
-    fn get_color(&mut self, value:usize) -> egui::Color32 {
+    fn get_color(&mut self, value: usize) -> egui::Color32 {
         match value {
             1 => egui::Color32::WHITE,
             2 => egui::Color32::LIGHT_BLUE,
@@ -183,8 +182,12 @@ impl Game2048 {
             Direction::Right => board_right,
             _ => return,
         };
-        if board_up == self.board && board_down == self.board && board_left == self.board && board_right == self.board {
-            self.msg = Some(Msg::new("Game Over".to_string(),MsgType::Info));
+        if board_up == self.board
+            && board_down == self.board
+            && board_left == self.board
+            && board_right == self.board
+        {
+            self.msg = Some(Msg::new("Game Over".to_string(), MsgType::Info));
             return;
         }
         if desire_board != self.board {
@@ -196,22 +199,36 @@ impl Game2048 {
 
 impl ToolComponent for Game2048 {
     fn paint_ui(&mut self, ui: &mut egui::Ui, _ctx: &egui::Context) {
-        ui.horizontal(|ui|{
+        ui.horizontal(|ui| {
             if ui.button("Clear").clicked() {
                 *self = Self::new();
             }
-            ui.checkbox(&mut self.cheat, "Cheat Mode").on_hover_ui(|ui| {
-                if self.cheat {
-                    ui.label(egui::RichText::new("Cheat Mode On").color(egui::Color32::LIGHT_RED));
-                    ui.label(egui::RichText::new("Left Click to Remove").color(egui::Color32::LIGHT_GREEN));
-                    ui.label(egui::RichText::new("Right Click to Replace").color(egui::Color32::LIGHT_BLUE));
-                } else {
-                    ui.label(egui::RichText::new("Cheat Mode Off").color(egui::Color32::GOLD));
-                }
-            });
+            ui.checkbox(&mut self.cheat, "Cheat Mode")
+                .on_hover_ui(|ui| {
+                    if self.cheat {
+                        ui.label(
+                            egui::RichText::new("Cheat Mode On").color(egui::Color32::LIGHT_RED),
+                        );
+                        ui.label(
+                            egui::RichText::new("Left Click to Remove")
+                                .color(egui::Color32::LIGHT_GREEN),
+                        );
+                        ui.label(
+                            egui::RichText::new("Right Click to Replace")
+                                .color(egui::Color32::LIGHT_BLUE),
+                        );
+                    } else {
+                        ui.label(egui::RichText::new("Cheat Mode Off").color(egui::Color32::GOLD));
+                    }
+                });
             if self.cheat {
                 ui.label("2 ^");
-                ui.add(egui::DragValue::new(&mut self.cheat_add).speed(1.0).clamp_range(0..=(usize::BITS / 2))).on_hover_text((1usize << self.cheat_add).to_string());
+                ui.add(
+                    egui::DragValue::new(&mut self.cheat_add)
+                        .speed(1.0)
+                        .clamp_range(0..=(usize::BITS / 2)),
+                )
+                .on_hover_text((1usize << self.cheat_add).to_string());
             }
         });
         let direct = ui.input_mut(|input| {
@@ -241,8 +258,7 @@ impl ToolComponent for Game2048 {
             } else {
                 egui::Sense::hover()
             };
-            let (rect, response) =
-                ui.allocate_exact_size(egui::Vec2::splat(SIZE * 4.0), sense);
+            let (rect, response) = ui.allocate_exact_size(egui::Vec2::splat(SIZE * 4.0), sense);
             let line_stroke = egui::Stroke::new(2f32, egui::Color32::WHITE);
             let painter = ui.painter();
             // paint vertical lines

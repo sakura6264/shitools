@@ -1,10 +1,10 @@
 use super::*;
 use eframe::egui;
-use std::sync::mpsc;
-use std::thread;
 use silicon::assets::HighlightingAssets;
 use silicon::formatter::ImageFormatterBuilder;
 use silicon::utils::ShadowAdder;
+use std::sync::mpsc;
+use std::thread;
 use syntect::easy::HighlightLines;
 use syntect::util::LinesWithEndings;
 
@@ -30,7 +30,7 @@ const SAVE_IMAGE: u8 = 1;
 #[derive(Clone, PartialEq)]
 struct GenArgs {
     pub code: String,
-    pub  font_size: f32,
+    pub font_size: f32,
     pub theme: String,
     pub theme_search: String,
     pub syntax: String,
@@ -123,10 +123,7 @@ impl CodePicture {
     }
     fn generate_code_picture(args: &GenArgs, path: &std::path::PathBuf) -> Result<(), String> {
         let highlightassets = HighlightingAssets::new();
-        let (ps, ts) = (
-            highlightassets.syntax_set,
-            highlightassets.theme_set,
-        );
+        let (ps, ts) = (highlightassets.syntax_set, highlightassets.theme_set);
         let syntax = ps
             .find_syntax_by_name(&args.syntax)
             .ok_or("Syntax not found")?;
@@ -176,7 +173,10 @@ impl ToolComponent for CodePicture {
                 if self.hthread.is_none() {
                     self.file_state = FileState::SaveImage;
                 } else {
-                    self.msg = Some(Msg::new("Generation in progress".to_string(), MsgType::Info));
+                    self.msg = Some(Msg::new(
+                        "Generation in progress".to_string(),
+                        MsgType::Info,
+                    ));
                 }
             }
             ui.label("Font Size");
@@ -320,7 +320,7 @@ impl ToolComponent for CodePicture {
     }
     fn get_file_op(&mut self) -> Option<(FileOp, u8)> {
         match self.file_state {
-            FileState::OpenBackgroud =>{
+            FileState::OpenBackgroud => {
                 self.file_state = FileState::None;
                 Some((
                     FileOp {
@@ -330,7 +330,7 @@ impl ToolComponent for CodePicture {
                     },
                     OPEN_BACKGROUND,
                 ))
-            },
+            }
             FileState::SaveImage => {
                 self.file_state = FileState::None;
                 Some((
@@ -341,7 +341,7 @@ impl ToolComponent for CodePicture {
                     },
                     SAVE_IMAGE,
                 ))
-            },
+            }
             _ => None,
         }
     }

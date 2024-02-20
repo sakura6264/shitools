@@ -4,6 +4,7 @@ mod batch_process;
 mod blank;
 mod bool_logic;
 mod byte_tool;
+mod code_picture;
 mod encode_tool;
 mod fake_data_gen;
 mod game2048;
@@ -14,7 +15,6 @@ mod text_util;
 mod time_tool;
 mod uuid_comp;
 mod vt_comp;
-mod code_picture;
 
 pub use blank::Blank;
 use std::sync::OnceLock;

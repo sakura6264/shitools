@@ -1,4 +1,7 @@
-use std::{hash::{Hash, Hasher}, path::PathBuf};
+use std::{
+    hash::{Hash, Hasher},
+    path::PathBuf,
+};
 
 pub fn dir_path() -> Result<PathBuf, String> {
     // return the directory of the executable
@@ -81,14 +84,17 @@ pub fn list_subdir_files(sub: &str, filter_exts: &[String]) -> Result<Vec<String
 pub fn get_seed() -> [u8; 32] {
     // return a seed for ChaChaRng
     let mut seed = [0; 32];
-    let time = chrono::Utc::now().timestamp_nanos_opt().unwrap_or(chrono::Utc::now().timestamp_micros()).to_le_bytes();
+    let time = chrono::Utc::now()
+        .timestamp_nanos_opt()
+        .unwrap_or(chrono::Utc::now().timestamp_micros())
+        .to_le_bytes();
     let pid = std::process::id();
     let pid_le = pid.to_le_bytes();
     let pid_be = pid.to_be_bytes();
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
     std::thread::current().id().hash(&mut hasher);
     let tid_hash = hasher.finish().to_le_bytes();
-    const MAGIC : &[u8;8] = b"SHITOOLS";
+    const MAGIC: &[u8; 8] = b"SHITOOLS";
     // seed = [time, pid_le, pid_be, tid_hash, MAGIC]
     seed[..8].copy_from_slice(&time);
     seed[8..12].copy_from_slice(&pid_le);
