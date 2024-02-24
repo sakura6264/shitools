@@ -15,6 +15,7 @@ mod text_util;
 mod time_tool;
 mod uuid_comp;
 mod vt_comp;
+mod polyglot_png;
 
 pub use blank::Blank;
 use std::sync::OnceLock;
@@ -41,6 +42,7 @@ pub enum Tools {
     BatchProcess,
     Game2048,
     CodePicture,
+    PolyglotPng,
 }
 
 #[derive(PartialEq, Eq, Hash, Clone)]
@@ -110,6 +112,7 @@ pub fn get_component(component: Tools) -> Box<dyn ToolComponent> {
             Ok(t) => Box::new(t),
             Err(e) => Box::new(InitError::new(e)),
         },
+        Tools::PolyglotPng => Box::new(polyglot_png::PolyglotPng::new()),
         _ => Box::new(blank::Blank),
     }
 }
@@ -137,6 +140,7 @@ pub fn get_component_namelist() -> Vec<(String, Vec<(String, Tools)>)> {
     file_list.push(("Byte Tool".to_string(), Tools::ByteTool));
     file_list.push(("Batch Process".to_string(), Tools::BatchProcess));
     file_list.push(("Code Picture".to_string(), Tools::CodePicture));
+    file_list.push(("Polyglot PNG".to_string(), Tools::PolyglotPng));
     list.push(("File".to_string(), file_list));
 
     let mut about_list = Vec::new();

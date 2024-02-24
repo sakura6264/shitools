@@ -62,8 +62,9 @@ whirlpool = "*"
 file-format = "*"
 egui_json_tree = "*"
 rand_chacha = "*"
-silicon = { version = "*", default-features = false, features = ["anyhow"]}
+silicon = { version = "*", default-features = false, features = ["anyhow"] }
 syntect = "*"
+flate2 = "*"
 
 [build-dependencies]
 embed-resource = "*"

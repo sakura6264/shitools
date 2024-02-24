@@ -6,6 +6,7 @@ pub struct Blank;
 
 impl ToolComponent for Blank {
     fn paint_ui(&mut self, ui: &mut egui::Ui, _ctx: &egui::Context) {
-        ui.heading("Hello World!");
+        ui.heading("Shitools");
+        ui.label("A collection of tools");
     }
 }

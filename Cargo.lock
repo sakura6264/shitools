@@ -3852,6 +3852,7 @@ dependencies = [
  "encoding",
  "fake",
  "file-format",
+ "flate2",
  "fsb",
  "gost94",
  "groestl",
