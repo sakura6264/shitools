@@ -25,6 +25,10 @@ pub struct TextUtil {
     split_size: usize,
     msg: Option<Msg>,
     state: FileState,
+    current_page: usize,
+    page_size: usize,
+    against_page: usize,
+    against_page_size: usize,
 }
 
 impl TextUtil {
@@ -37,6 +41,10 @@ impl TextUtil {
             split_size: 500,
             msg: None,
             state: FileState::None,
+            current_page: 0,
+            page_size: 50,
+            against_page: 0,
+            against_page_size: 50,
         }
     }
     fn texts_from_file(&mut self, file: &std::path::PathBuf) -> Result<(), String> {
@@ -151,8 +159,36 @@ impl ToolComponent for TextUtil {
                     });
                     ui.separator();
                     ui.label(format!("Total: {}", self.texts.len()));
+                    ui.horizontal(|ui| {
+                        ui.label("Page Size :");
+                        ui.add(egui::DragValue::new(&mut self.page_size).speed(1.0));
+                        if ui.button("<<").clicked() {
+                            self.current_page = 0;
+                        }
+                        if ui.button("<").clicked() {
+                            if self.current_page > 0 {
+                                self.current_page -= 1;
+                            }
+                        }
+                        ui.add(
+                            egui::DragValue::new(&mut self.current_page)
+                                .speed(1.0)
+                                .clamp_range(0..=self.texts.len() / self.page_size),
+                        );
+                        ui.label(format!("/{}", self.texts.len() / self.page_size));
+                        if ui.button(">").clicked() {
+                            if self.current_page < self.texts.len() / self.page_size {
+                                self.current_page += 1;
+                            }
+                        }
+                        if ui.button(">>").clicked() {
+                            self.current_page = self.texts.len() / self.page_size;
+                        }
+                    });
                     let mut to_remove = None;
-                    for text in &self.texts {
+                    let from_num = self.current_page * self.page_size;
+                    let to_num = ((self.current_page + 1) * self.page_size).min(self.texts.len());
+                    for text in self.texts.iter().skip(from_num).take(to_num - from_num) {
                         ui.horizontal(|ui| {
                             if ui.button("Remove").clicked() {
                                 to_remove = Some(text.clone());
@@ -183,8 +219,37 @@ impl ToolComponent for TextUtil {
                     });
                     ui.separator();
                     ui.label(format!("Total: {}", self.againsts.len()));
+                    ui.horizontal(|ui| {
+                        ui.label("Page Size :");
+                        ui.add(egui::DragValue::new(&mut self.against_page_size).speed(1.0));
+                        if ui.button("<<").clicked() {
+                            self.against_page = 0;
+                        }
+                        if ui.button("<").clicked() {
+                            if self.against_page > 0 {
+                                self.against_page -= 1;
+                            }
+                        }
+                        ui.add(
+                            egui::DragValue::new(&mut self.against_page)
+                                .speed(1.0)
+                                .clamp_range(0..=self.againsts.len() / self.against_page_size),
+                        );
+                        ui.label(format!("/{}", self.againsts.len() / self.against_page_size));
+                        if ui.button(">").clicked() {
+                            if self.against_page < self.againsts.len() / self.against_page_size {
+                                self.against_page += 1;
+                            }
+                        }
+                        if ui.button(">>").clicked() {
+                            self.against_page = self.againsts.len() / self.against_page_size;
+                        }
+                    });
                     let mut to_remove = None;
-                    for against in &self.againsts {
+                    let from_num = self.against_page * self.against_page_size;
+                    let to_num =
+                        ((self.against_page + 1) * self.against_page_size).min(self.againsts.len());
+                    for against in self.againsts.iter().skip(from_num).take(to_num - from_num) {
                         ui.horizontal(|ui| {
                             if ui.button("Remove").clicked() {
                                 to_remove = Some(against.clone());
