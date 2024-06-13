@@ -10,6 +10,7 @@ pub struct Game2048 {
     cheat_add: usize,
     rng: ChaChaRng,
     msg: Option<Msg>,
+    score: usize,
 }
 
 #[derive(Clone, PartialEq, Eq, Hash)]
@@ -40,10 +41,12 @@ impl Game2048 {
             cheat_add: 0,
             rng,
             msg: None,
+            score: 0,
         }
     }
-    fn move_up(&self) -> [[usize; 4]; 4] {
+    fn move_up(&self) -> ([[usize; 4]; 4], usize) {
         let mut board_new = [[0; 4]; 4];
+        let mut score = 0;
         for x in 0..4 {
             let mut filled = Vec::new();
             for y in 0..4 {
@@ -51,7 +54,9 @@ impl Game2048 {
                 if value > 0 {
                     if *filled.last().unwrap_or(&0) == value {
                         let last = filled.pop().unwrap();
-                        filled.push(last << 1);
+                        let new_value = last << 1;
+                        filled.push(new_value);
+                        score = score + new_value;
                     } else {
                         filled.push(value);
                     }
@@ -63,10 +68,11 @@ impl Game2048 {
                 }
             }
         }
-        board_new
+        (board_new, score)
     }
-    fn move_down(&self) -> [[usize; 4]; 4] {
+    fn move_down(&self) -> ([[usize; 4]; 4], usize) {
         let mut board_new = [[0; 4]; 4];
+        let mut score = 0;
         for x in 0..4 {
             let mut filled = Vec::new();
             for y in (0..4).rev() {
@@ -74,7 +80,9 @@ impl Game2048 {
                 if value > 0 {
                     if *filled.last().unwrap_or(&0) == value {
                         let last = filled.pop().unwrap();
-                        filled.push(last << 1);
+                        let new_value = last << 1;
+                        filled.push(new_value);
+                        score = score + new_value;
                     } else {
                         filled.push(value);
                     }
@@ -86,10 +94,11 @@ impl Game2048 {
                 }
             }
         }
-        board_new
+        (board_new, score)
     }
-    fn move_left(&self) -> [[usize; 4]; 4] {
+    fn move_left(&self) -> ([[usize; 4]; 4], usize) {
         let mut board_new = [[0; 4]; 4];
+        let mut score = 0;
         for y in 0..4 {
             let mut filled = Vec::new();
             for x in 0..4 {
@@ -97,7 +106,9 @@ impl Game2048 {
                 if value > 0 {
                     if *filled.last().unwrap_or(&0) == value {
                         let last = filled.pop().unwrap();
-                        filled.push(last << 1);
+                        let new_value = last << 1;
+                        filled.push(new_value);
+                        score = score + new_value;
                     } else {
                         filled.push(value);
                     }
@@ -109,10 +120,11 @@ impl Game2048 {
                 }
             }
         }
-        board_new
+        (board_new, score)
     }
-    fn move_right(&self) -> [[usize; 4]; 4] {
+    fn move_right(&self) -> ([[usize; 4]; 4], usize) {
         let mut board_new = [[0; 4]; 4];
+        let mut score = 0;
         for y in 0..4 {
             let mut filled = Vec::new();
             for x in (0..4).rev() {
@@ -120,7 +132,9 @@ impl Game2048 {
                 if value > 0 {
                     if *filled.last().unwrap_or(&0) == value {
                         let last = filled.pop().unwrap();
-                        filled.push(last << 1);
+                        let new_value = last << 1;
+                        filled.push(new_value);
+                        score = score + new_value;
                     } else {
                         filled.push(value);
                     }
@@ -132,7 +146,7 @@ impl Game2048 {
                 }
             }
         }
-        board_new
+        (board_new, score)
     }
     fn add_new(&mut self) {
         let mut emptys = Vec::new();
@@ -171,15 +185,15 @@ impl Game2048 {
         }
     }
     fn move_board(&mut self, direct: Direction) {
-        let board_up = self.move_up();
-        let board_down = self.move_down();
-        let board_left = self.move_left();
-        let board_right = self.move_right();
-        let desire_board = match direct {
-            Direction::Up => board_up,
-            Direction::Down => board_down,
-            Direction::Left => board_left,
-            Direction::Right => board_right,
+        let (board_up, score_up) = self.move_up();
+        let (board_down, score_down) = self.move_down();
+        let (board_left,score_left) = self.move_left();
+        let (board_right,score_right) = self.move_right();
+        let (desire_board, desire_score) = match direct {
+            Direction::Up => (board_up, score_up),
+            Direction::Down => (board_down, score_down),
+            Direction::Left => (board_left, score_left),
+            Direction::Right => (board_right, score_right),
             _ => return,
         };
         if board_up == self.board
@@ -187,11 +201,12 @@ impl Game2048 {
             && board_left == self.board
             && board_right == self.board
         {
-            self.msg = Some(Msg::new("Game Over".to_string(), MsgType::Info));
+            self.msg = Some(Msg::new(format!("Game Over! Score:{}", self.score), MsgType::Info));
             return;
         }
         if desire_board != self.board {
             self.board = desire_board;
+            self.score = self.score + desire_score;
             self.add_new();
         }
     }
@@ -199,6 +214,7 @@ impl Game2048 {
 
 impl ToolComponent for Game2048 {
     fn paint_ui(&mut self, ui: &mut egui::Ui, _ctx: &egui::Context) {
+        ui.label(format!("Score: {}", self.score));
         ui.horizontal(|ui| {
             if ui.button("Clear").clicked() {
                 *self = Self::new();

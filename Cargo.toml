@@ -9,7 +9,7 @@ edition = "2021"
 mlua = { version = "*", features = ["luajit", "vendored"] }
 mimalloc = "*"
 eframe = { version = "*", default-features = false, features = [
-    "wgpu",
+    "glow",
     "accesskit",
 ] }
 egui_extras = { version = "*", features = ["datepicker", "syntect"] }
@@ -21,7 +21,7 @@ egui-toast = "*"
 egui_file = "*"
 vtracer = "*"
 visioncortex = "*"
-image = "*"
+image = "0.24" # wait for silcon update
 uuid = { version = "*", features = [
     "fast-rng",
     "v1",
@@ -59,7 +59,7 @@ sm3 = "*"
 streebog = "*"
 tiger = "*"
 whirlpool = "*"
-file-format = "*"
+magika = "*"
 egui_json_tree = "*"
 rand_chacha = "*"
 silicon = { version = "*", default-features = false, features = ["anyhow"] }

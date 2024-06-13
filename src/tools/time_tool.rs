@@ -20,7 +20,7 @@ pub struct TimeTool {
 
 impl TimeTool {
     pub fn new() -> Self {
-        let now = chrono::Local::now();
+        let now = chrono::Local::now().to_utc();
         let date = now.date_naive();
         let hour = now.hour();
         let minute = now.minute();
@@ -96,7 +96,7 @@ impl ToolComponent for TimeTool {
                     .add(egui::DragValue::new(&mut self.nanosecond).clamp_range(0..=999))
                     .changed();
                 if ui.button("Now").clicked() {
-                    datetime_tochange = Some(chrono::Local::now().naive_local());
+                    datetime_tochange = Some(chrono::Local::now().to_utc());
                 }
                 date_change
                     || hour_change
@@ -116,7 +116,7 @@ impl ToolComponent for TimeTool {
                 .and_hms_nano_opt(self.hour, self.minute, self.second, total_nano);
             match time {
                 Some(time) => {
-                    datetime_tochange = Some(time);
+                    datetime_tochange = Some(time.and_utc());
                 }
                 None => {
                     self.msg = Some(Msg::new("Error: Invalid time".into(), MsgType::Error));
@@ -142,7 +142,7 @@ impl ToolComponent for TimeTool {
             })
             .inner
         {
-            let time = chrono::NaiveDateTime::from_timestamp_opt(self.timestamp, 0);
+            let time = chrono::DateTime::from_timestamp(self.timestamp, 0);
             match time {
                 Some(time) => {
                     datetime_tochange = Some(time);
@@ -171,7 +171,7 @@ impl ToolComponent for TimeTool {
             })
             .inner
         {
-            let time = chrono::NaiveDateTime::from_timestamp_millis(self.millisecond_timestamp);
+            let time = chrono::DateTime::from_timestamp_millis(self.millisecond_timestamp);
             match time {
                 Some(time) => {
                     datetime_tochange = Some(time);
@@ -203,7 +203,7 @@ impl ToolComponent for TimeTool {
             })
             .inner
         {
-            let time = chrono::NaiveDateTime::from_timestamp_micros(self.microsecond_timestamp);
+            let time = chrono::DateTime::from_timestamp_micros(self.microsecond_timestamp);
             match time {
                 Some(time) => {
                     datetime_tochange = Some(time);
@@ -235,21 +235,10 @@ impl ToolComponent for TimeTool {
             })
             .inner
         {
-            let time = chrono::NaiveDateTime::from_timestamp_nanos(self.nanosecond_timestamp);
-            match time {
-                Some(time) => {
-                    datetime_tochange = Some(time);
-                }
-                None => {
-                    self.msg = Some(Msg::new(
-                        "Error: Invalid nanosecond timestamp".into(),
-                        MsgType::Error,
-                    ));
-                }
-            }
+            datetime_tochange = Some(chrono::DateTime::from_timestamp_nanos(self.nanosecond_timestamp));
         }
         if let Some(ts) = datetime_tochange {
-            self.date = ts.date();
+            self.date = ts.date_naive();
             self.hour = ts.hour();
             self.minute = ts.minute();
             self.second = ts.second();

@@ -57,16 +57,6 @@ pub fn xor(input: &[u8], key: &[u8]) -> String {
 }
 
 pub fn format_guess(input: &[u8]) -> String {
-    let fmt = file_format::FileFormat::from_bytes(input);
-    let shortname = match fmt.short_name() {
-        Some(name) => name,
-        None => "unknown",
-    };
-    return format!(
-        "{}\nshort: {}\nmedia type: {}\nextension: {}",
-        fmt,
-        shortname,
-        fmt.media_type(),
-        fmt.extension()
-    );
+    
+    return "Wait for magika".into();
 }
