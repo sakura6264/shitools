@@ -286,7 +286,7 @@ impl ToolComponent for BatchProcess {
         ui.horizontal(|ui| {
             let mut cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.add_sized(max_size, egui::Label::new("Source"));
                     ui.horizontal(|ui| {
@@ -303,7 +303,7 @@ impl ToolComponent for BatchProcess {
                         ui.add(
                             egui::DragValue::new(&mut self.from_page)
                                 .speed(1.0)
-                                .clamp_range(0..=self.from_list.len() / self.from_page_size),
+                                .range(0..=self.from_list.len() / self.from_page_size),
                         );
                         ui.label(format!("/{}", self.from_list.len() / self.from_page_size));
                         if ui.button(">").clicked() {
@@ -330,7 +330,7 @@ impl ToolComponent for BatchProcess {
             ui.separator();
             cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.add_sized(max_size, egui::Label::new("Destination"));
                     ui.horizontal(|ui| {
@@ -347,7 +347,7 @@ impl ToolComponent for BatchProcess {
                         ui.add(
                             egui::DragValue::new(&mut self.to_page)
                                 .speed(1.0)
-                                .clamp_range(0..=self.to_list.len() / self.to_page_size),
+                                .range(0..=self.to_list.len() / self.to_page_size),
                         );
                         ui.label(format!("/{}", self.to_list.len() / self.to_page_size));
                         if ui.button(">").clicked() {

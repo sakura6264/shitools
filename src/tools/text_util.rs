@@ -144,7 +144,7 @@ impl ToolComponent for TextUtil {
         ui.horizontal(|ui| {
             let mut cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.horizontal(|ui| {
                         ui.label("Text");
@@ -173,7 +173,7 @@ impl ToolComponent for TextUtil {
                         ui.add(
                             egui::DragValue::new(&mut self.current_page)
                                 .speed(1.0)
-                                .clamp_range(0..=self.texts.len() / self.page_size),
+                                .range(0..=self.texts.len() / self.page_size),
                         );
                         ui.label(format!("/{}", self.texts.len() / self.page_size));
                         if ui.button(">").clicked() {
@@ -204,7 +204,7 @@ impl ToolComponent for TextUtil {
             });
             cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.horizontal(|ui| {
                         ui.label("Against");
@@ -233,7 +233,7 @@ impl ToolComponent for TextUtil {
                         ui.add(
                             egui::DragValue::new(&mut self.against_page)
                                 .speed(1.0)
-                                .clamp_range(0..=self.againsts.len() / self.against_page_size),
+                                .range(0..=self.againsts.len() / self.against_page_size),
                         );
                         ui.label(format!("/{}", self.againsts.len() / self.against_page_size));
                         if ui.button(">").clicked() {

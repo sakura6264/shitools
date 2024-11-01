@@ -204,13 +204,13 @@ impl ToolComponent for BoolLogic {
             ui.add(
                 egui::DragValue::new(&mut self.gen_input_num)
                     .speed(1.0)
-                    .clamp_range(0..=calc::CHARLIST.len()),
+                    .range(0..=calc::CHARLIST.len()),
             );
             ui.label("Output:");
             ui.add(
                 egui::DragValue::new(&mut self.gen_output_num)
                     .speed(1.0)
-                    .clamp_range(0..=calc::CHARLIST.len()),
+                    .range(0..=calc::CHARLIST.len()),
             );
         });
         ui.vertical(|ui| {

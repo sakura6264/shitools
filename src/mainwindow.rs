@@ -1,4 +1,4 @@
-use crate::tools;
+use crate::{dir_remember, tools};
 use eframe::egui;
 
 const MARGIN: f32 = 40f32;
@@ -57,20 +57,26 @@ impl eframe::App for MainWindow {
                 title.push_str(" (*)");
             }
             let mut dlg = match file_op.mode {
-                tools::FileOpMode::Open => egui_file::FileDialog::open_file(None)
-                    .title(title.as_str())
-                    .default_size(egui::vec2(width / 2f32, height - 2f32 * MARGIN))
-                    .current_pos(egui::pos2(width / 4f32, MARGIN))
-                    .filename_filter(filter_build(file_op.filter)),
-                tools::FileOpMode::Save => egui_file::FileDialog::save_file(None)
-                    .title(title.as_str())
-                    .default_size(egui::vec2(width / 2f32, height - 2f32 * MARGIN))
-                    .current_pos(egui::pos2(width / 4f32, MARGIN))
-                    .filename_filter(filter_build(file_op.filter)),
-                tools::FileOpMode::Dir => egui_file::FileDialog::select_folder(None)
-                    .title(title.as_str())
-                    .default_size(egui::vec2(width / 2f32, height - 2f32 * MARGIN))
-                    .current_pos(egui::pos2(width / 4f32, MARGIN)),
+                tools::FileOpMode::Open => {
+                    egui_file::FileDialog::open_file(dir_remember::get_dir())
+                        .title(title.as_str())
+                        .default_size(egui::vec2(width / 2f32, height - 2f32 * MARGIN))
+                        .current_pos(egui::pos2(width / 4f32, MARGIN))
+                        .filename_filter(filter_build(file_op.filter))
+                }
+                tools::FileOpMode::Save => {
+                    egui_file::FileDialog::save_file(dir_remember::get_dir())
+                        .title(title.as_str())
+                        .default_size(egui::vec2(width / 2f32, height - 2f32 * MARGIN))
+                        .current_pos(egui::pos2(width / 4f32, MARGIN))
+                        .filename_filter(filter_build(file_op.filter))
+                }
+                tools::FileOpMode::Dir => {
+                    egui_file::FileDialog::select_folder(dir_remember::get_dir())
+                        .title(title.as_str())
+                        .default_size(egui::vec2(width / 2f32, height - 2f32 * MARGIN))
+                        .current_pos(egui::pos2(width / 4f32, MARGIN))
+                }
             };
             dlg.open();
             self.file_dialog = Some(dlg);
@@ -82,6 +88,7 @@ impl eframe::App for MainWindow {
                 if let Some(path) = dlg.path() {
                     self.tool
                         .set_file_op(Some((path.into(), self.current_dialog_id)));
+                    dir_remember::set_dir(dlg.directory().into());
                     self.file_dialog = None;
                     self.current_dialog_id = 0;
                 }
@@ -96,6 +103,7 @@ impl eframe::App for MainWindow {
                         options: egui_toast::ToastOptions::default()
                             .duration_in_seconds(3f64)
                             .show_progress(true),
+                        style: egui_toast::ToastStyle::default(),
                     });
                 }
                 tools::MsgType::Warning => {
@@ -105,6 +113,7 @@ impl eframe::App for MainWindow {
                         options: egui_toast::ToastOptions::default()
                             .duration_in_seconds(2f64)
                             .show_progress(true),
+                        style: egui_toast::ToastStyle::default(),
                     });
                 }
                 tools::MsgType::Info => {
@@ -114,6 +123,7 @@ impl eframe::App for MainWindow {
                         options: egui_toast::ToastOptions::default()
                             .duration_in_seconds(1f64)
                             .show_progress(true),
+                        style: egui_toast::ToastStyle::default(),
                     });
                 }
             }

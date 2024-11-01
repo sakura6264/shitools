@@ -49,7 +49,7 @@ impl ToolComponent for RandStr {
                 ui.add(
                     egui::DragValue::new(&mut self.len)
                         .speed(1.0)
-                        .clamp_range(0..=512),
+                        .range(0..=512),
                 );
             });
             ui.horizontal(|ui| {

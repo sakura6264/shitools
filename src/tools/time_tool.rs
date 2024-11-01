@@ -73,27 +73,27 @@ impl ToolComponent for TimeTool {
                     .add(egui_extras::DatePickerButton::new(&mut self.date))
                     .changed();
                 let hour_change = ui
-                    .add(egui::DragValue::new(&mut self.hour).clamp_range(0..=23))
+                    .add(egui::DragValue::new(&mut self.hour).range(0..=23))
                     .changed();
                 ui.label(":");
                 let minute_change = ui
-                    .add(egui::DragValue::new(&mut self.minute).clamp_range(0..=59))
+                    .add(egui::DragValue::new(&mut self.minute).range(0..=59))
                     .changed();
                 ui.label(":");
                 let second_change = ui
-                    .add(egui::DragValue::new(&mut self.second).clamp_range(0..=59))
+                    .add(egui::DragValue::new(&mut self.second).range(0..=59))
                     .changed();
                 ui.label(".");
                 let millisecond_change = ui
-                    .add(egui::DragValue::new(&mut self.millisecond).clamp_range(0..=999))
+                    .add(egui::DragValue::new(&mut self.millisecond).range(0..=999))
                     .changed();
                 ui.label(".");
                 let microsecond_change = ui
-                    .add(egui::DragValue::new(&mut self.microsecond).clamp_range(0..=999))
+                    .add(egui::DragValue::new(&mut self.microsecond).range(0..=999))
                     .changed();
                 ui.label(".");
                 let nanosecond_change = ui
-                    .add(egui::DragValue::new(&mut self.nanosecond).clamp_range(0..=999))
+                    .add(egui::DragValue::new(&mut self.nanosecond).range(0..=999))
                     .changed();
                 if ui.button("Now").clicked() {
                     datetime_tochange = Some(chrono::Local::now().to_utc());
@@ -129,7 +129,7 @@ impl ToolComponent for TimeTool {
                 let change = ui
                     .add(
                         egui::DragValue::new(&mut self.timestamp)
-                            .clamp_range(0..=i64::MAX)
+                            .range(0..=i64::MAX)
                             .speed(1.0),
                     )
                     .changed();
@@ -158,7 +158,7 @@ impl ToolComponent for TimeTool {
                 let change = ui
                     .add(
                         egui::DragValue::new(&mut self.millisecond_timestamp)
-                            .clamp_range(0..=i64::MAX)
+                            .range(0..=i64::MAX)
                             .speed(10.0),
                     )
                     .changed();
@@ -190,7 +190,7 @@ impl ToolComponent for TimeTool {
                 let change = ui
                     .add(
                         egui::DragValue::new(&mut self.microsecond_timestamp)
-                            .clamp_range(0..=i64::MAX)
+                            .range(0..=i64::MAX)
                             .speed(100.0),
                     )
                     .changed();
@@ -222,7 +222,7 @@ impl ToolComponent for TimeTool {
                 let change = ui
                     .add(
                         egui::DragValue::new(&mut self.nanosecond_timestamp)
-                            .clamp_range(0..=i64::MAX)
+                            .range(0..=i64::MAX)
                             .speed(1000.0),
                     )
                     .changed();

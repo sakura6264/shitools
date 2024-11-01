@@ -1,4 +1,5 @@
 #![windows_subsystem = "windows"]
+mod dir_remember;
 mod mainwindow;
 mod tools;
 mod utils;
@@ -15,6 +16,8 @@ include_flate::flate!(static ICON: [u8] from "assets/shitools.png");
 static GLOBAL: MiMalloc = MiMalloc;
 
 fn main() {
+    // set environment variable DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1=1 to avoid crash on AMD
+    // std::env::set_var("DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1", "1");
     let icon_img = image::load_from_memory(&ICON).unwrap();
     let icon_buffer = icon_img.to_rgba8();
     let icon_pixels = icon_buffer.as_flat_samples();
@@ -33,8 +36,6 @@ fn main() {
             icon: Some(Arc::new(icon_data)),
             ..Default::default()
         },
-        default_theme: eframe::Theme::Dark,
-        follow_system_theme: false,
         ..Default::default()
     };
     eframe::run_native(
@@ -63,8 +64,8 @@ fn main() {
             monospace.insert(0, "fallback".to_string());
             monospace.push("fonts".to_string());
             cc.egui_ctx.set_fonts(fonts);
-            Box::new(mainwindow::MainWindow::new())
+            cc.egui_ctx.set_theme(egui::Theme::Dark);
+            Ok(Box::new(mainwindow::MainWindow::new()))
         }),
-    )
-    .unwrap();
+    ).unwrap();
 }

@@ -34,7 +34,7 @@ impl ToolComponent for Encoder {
         ui.horizontal(|ui| {
             let mut cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.label("Input");
                     ui.add(
@@ -46,7 +46,7 @@ impl ToolComponent for Encoder {
             });
             cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.label("Output");
                     ui.add(

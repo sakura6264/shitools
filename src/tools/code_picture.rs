@@ -53,6 +53,7 @@ pub struct CodePicture {
     highlightassets: HighlightingAssets,
     theme: String,
     theme_search: String,
+
     syntax: String,
     syntax_search: String,
     shadow_blur_radius: f32,
@@ -180,7 +181,7 @@ impl ToolComponent for CodePicture {
                 }
             }
             ui.label("Font Size");
-            ui.add(egui::DragValue::new(&mut self.font_size).clamp_range(0.0..=f32::MAX));
+            ui.add(egui::DragValue::new(&mut self.font_size).range(0.0..=f32::MAX));
             if let Some(ht) = &self.hthread {
                 if ht.is_finished() {
                     self.hthread = None;
@@ -213,20 +214,20 @@ impl ToolComponent for CodePicture {
                 }
             }
             ui.label("Blur Radius");
-            ui.add(egui::DragValue::new(&mut self.shadow_blur_radius).clamp_range(0.0..=f32::MAX));
+            ui.add(egui::DragValue::new(&mut self.shadow_blur_radius).range(0.0..=f32::MAX));
         });
         ui.horizontal(|ui| {
             ui.label("Horizontal Padding");
-            ui.add(egui::DragValue::new(&mut self.shadow_pad_horizontal).clamp_range(0..=u32::MAX));
+            ui.add(egui::DragValue::new(&mut self.shadow_pad_horizontal).range(0..=u32::MAX));
             ui.label("Vertical Padding");
-            ui.add(egui::DragValue::new(&mut self.shadow_pad_vertical).clamp_range(0..=u32::MAX));
+            ui.add(egui::DragValue::new(&mut self.shadow_pad_vertical).range(0..=u32::MAX));
             ui.label("Offset X");
             ui.add(
-                egui::DragValue::new(&mut self.shadow_offset_x).clamp_range(i32::MIN..=i32::MAX),
+                egui::DragValue::new(&mut self.shadow_offset_x).range(i32::MIN..=i32::MAX),
             );
             ui.label("Offset Y");
             ui.add(
-                egui::DragValue::new(&mut self.shadow_offset_y).clamp_range(i32::MIN..=i32::MAX),
+                egui::DragValue::new(&mut self.shadow_offset_y).range(i32::MIN..=i32::MAX),
             );
         });
         ui.separator();
@@ -235,7 +236,7 @@ impl ToolComponent for CodePicture {
             let mut cursor = ui.cursor();
             cursor.set_width(width / 4.0 - 5.0);
             // theme selector
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     let size = egui::vec2(width / 4.0 - 10.0, 20.0);
                     ui.add_sized(size, egui::Label::new(format!("Theme: {}", self.theme)));
@@ -258,7 +259,7 @@ impl ToolComponent for CodePicture {
             cursor = ui.cursor();
             cursor.set_width(width / 4.0 - 5.0);
             // syntax selector
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     let size = egui::vec2(width / 4.0 - 10.0, 20.0);
                     ui.add_sized(size, egui::Label::new(format!("Syntax: {}", self.syntax)));
@@ -291,15 +292,17 @@ impl ToolComponent for CodePicture {
             cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
             // code editor
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     let mut layouter = |ui: &egui::Ui, string: &str, wrap_width: f32| {
                         use egui_extras::syntax_highlighting::*;
                         let mut layout_job = egui_extras::syntax_highlighting::highlight(
                             ctx,
+                            ui.style(),
                             &CodeTheme::from_style(&ctx.style()),
                             string,
                             &self.syntax,
+
                         );
                         layout_job.wrap.max_width = wrap_width;
                         ui.fonts(|f| f.layout_job(layout_job))

@@ -110,7 +110,7 @@ impl ToolComponent for Vtracer {
                 ui.add_space(10.0);
                 ui.horizontal(|ui|{
                     ui.label("Filter Speckle:").on_hover_text("Discard patches small than X px in size");
-                    ui.add(egui::widgets::DragValue::new(&mut self.config.filter_speckle).speed(1.0).clamp_range(0..=128));
+                    ui.add(egui::widgets::DragValue::new(&mut self.config.filter_speckle).speed(1.0).range(0..=128));
                     ui.separator();
                     if ui.button(
                         if self.config.path_precision.is_none() {
@@ -126,16 +126,16 @@ impl ToolComponent for Vtracer {
                         }
                     }
                     if let Some(s) = &mut self.config.path_precision {
-                        ui.add(egui::widgets::DragValue::new(s).speed(1.0).clamp_range(0..=32));
+                        ui.add(egui::widgets::DragValue::new(s).speed(1.0).range(0..=32));
                     }
                 });
                 if let vtracer::ColorMode::Color = self.config.color_mode {
                     ui.add_space(10.0);
                     ui.horizontal(|ui|{
                         ui.label("Color Precision:").on_hover_text("Number of significant bits to use in a RGB channel");
-                        ui.add(egui::widgets::DragValue::new(&mut self.config.color_precision).speed(1.0).clamp_range(1..=6));
+                        ui.add(egui::widgets::DragValue::new(&mut self.config.color_precision).speed(1.0).range(1..=6));
                         ui.label("Gradient Step:").on_hover_text("Color difference between gradient layers");
-                        ui.add(egui::widgets::DragValue::new(&mut self.config.max_iterations).speed(1.0).clamp_range(0..=16));
+                        ui.add(egui::widgets::DragValue::new(&mut self.config.max_iterations).speed(1.0).range(0..=16));
                     });
                 }
 
@@ -143,11 +143,11 @@ impl ToolComponent for Vtracer {
                     ui.add_space(10.0);
                     ui.horizontal(|ui|{
                         ui.label("Corner Threshold").on_hover_text("Minimum Momentary Angle (in degrees) to be considered a corner (to be kept after smoothing)");
-                        ui.add(egui::widgets::DragValue::new(&mut self.config.corner_threshold).speed(1.0).clamp_range(0..=180));
+                        ui.add(egui::widgets::DragValue::new(&mut self.config.corner_threshold).speed(1.0).range(0..=180));
                         ui.label("Segment Length").on_hover_text("Perform Iterative Subdivide Smooth until all segments are shorter than this length");
                         ui.add(egui::widgets::DragValue::new(&mut self.config.length_threshold).speed(1.0));
                         ui.label("Splice Threshold").on_hover_text("Minimum Angle Displacement (in degrees) to be considered a cutting point between curves");
-                        ui.add(egui::widgets::DragValue::new(&mut self.config.splice_threshold).speed(1.0).clamp_range(0..=180));
+                        ui.add(egui::widgets::DragValue::new(&mut self.config.splice_threshold).speed(1.0).range(0..=180));
                     });
                 }
             });

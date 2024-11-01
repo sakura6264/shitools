@@ -45,7 +45,7 @@ impl ToolComponent for JsonTool {
         ui.horizontal(|ui| {
             let mut cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.horizontal(|ui| {
                         ui.label("Text");
@@ -82,6 +82,7 @@ impl ToolComponent for JsonTool {
                         use egui_extras::syntax_highlighting::*;
                         let mut layout_job = egui_extras::syntax_highlighting::highlight(
                             ctx,
+                            ui.style(),
                             &CodeTheme::from_style(&ctx.style()),
                             string,
                             "json",
@@ -105,7 +106,7 @@ impl ToolComponent for JsonTool {
             });
             cursor = ui.cursor();
             cursor.set_width(width / 2.0 - 5.0);
-            ui.allocate_ui_at_rect(cursor, |ui| {
+            ui.allocate_new_ui(egui::UiBuilder::new().max_rect(cursor), |ui| {
                 ui.vertical(|ui| {
                     ui.horizontal(|ui| {
                         ui.label("JSON");

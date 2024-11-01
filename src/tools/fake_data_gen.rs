@@ -340,12 +340,12 @@ impl ToolComponent for FakeDataGen {
                     }
                 });
                 ui.horizontal(|ui| {
-                    if ui.button("Catch Phase").clicked() {
+                    if ui.button("Catch Phrase").clicked() {
                         self.output = match self.locale {
-                            Locale::En => fake::faker::company::en::CatchPhase().fake(),
-                            Locale::Fr => fake::faker::company::fr_fr::CatchPhase().fake(),
-                            Locale::Cn => fake::faker::company::zh_cn::CatchPhase().fake(),
-                            Locale::Tw => fake::faker::company::zh_tw::CatchPhase().fake(),
+                            Locale::En => fake::faker::company::en::CatchPhrase().fake(),
+                            Locale::Fr => fake::faker::company::fr_fr::CatchPhrase().fake(),
+                            Locale::Cn => fake::faker::company::zh_cn::CatchPhrase().fake(),
+                            Locale::Tw => fake::faker::company::zh_tw::CatchPhrase().fake(),
                         }
                     }
                     if ui.button("Bs Verb").clicked() {

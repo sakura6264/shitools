@@ -59,7 +59,6 @@ sm3 = "*"
 streebog = "*"
 tiger = "*"
 whirlpool = "*"
-magika = "*"
 egui_json_tree = "*"
 rand_chacha = "*"
 silicon = { version = "*", default-features = false, features = ["anyhow"] }

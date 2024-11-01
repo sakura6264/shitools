@@ -242,7 +242,7 @@ impl ToolComponent for Game2048 {
                 ui.add(
                     egui::DragValue::new(&mut self.cheat_add)
                         .speed(1.0)
-                        .clamp_range(0..=(usize::BITS / 2)),
+                        .range(0..=(usize::BITS / 2)),
                 )
                 .on_hover_text((1usize << self.cheat_add).to_string());
             }
