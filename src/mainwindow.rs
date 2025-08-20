@@ -88,7 +88,19 @@ impl eframe::App for MainWindow {
                 if let Some(path) = dlg.path() {
                     self.tool
                         .set_file_op(Some((path.into(), self.current_dialog_id)));
-                    dir_remember::set_dir(dlg.directory().into());
+
+                    // Save the directory path and handle any errors
+                    if let Err(err) = dir_remember::set_dir(dlg.directory().into()) {
+                        self.toasts.add(egui_toast::Toast {
+                            kind: egui_toast::ToastKind::Warning,
+                            text: format!("Failed to save directory: {}", err).into(),
+                            options: egui_toast::ToastOptions::default()
+                                .duration_in_seconds(2f64)
+                                .show_progress(true),
+                            style: egui_toast::ToastStyle::default(),
+                        });
+                    }
+
                     self.file_dialog = None;
                     self.current_dialog_id = 0;
                 }

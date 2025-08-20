@@ -4,18 +4,17 @@ mod batch_process;
 mod blank;
 mod bool_logic;
 mod byte_tool;
-mod code_picture;
 mod encode_tool;
 mod fake_data_gen;
 mod game2048;
 mod json_tool;
 mod lua_tool;
+mod polyglot_png;
 mod randstr;
 mod text_util;
 mod time_tool;
 mod uuid_comp;
 mod vt_comp;
-mod polyglot_png;
 
 pub use blank::Blank;
 use std::sync::OnceLock;
@@ -38,10 +37,9 @@ pub enum Tools {
     JsonTool,
     TimeTool,
     LuaTool,
-    TexctUtil,
+    TextUtil,
     BatchProcess,
     Game2048,
-    CodePicture,
     PolyglotPng,
 }
 
@@ -105,13 +103,9 @@ pub fn get_component(component: Tools) -> Box<dyn ToolComponent> {
             Ok(t) => Box::new(t),
             Err(e) => Box::new(InitError::new(e)),
         },
-        Tools::TexctUtil => Box::new(text_util::TextUtil::new()),
+        Tools::TextUtil => Box::new(text_util::TextUtil::new()),
         Tools::BatchProcess => Box::new(batch_process::BatchProcess::new()),
         Tools::Game2048 => Box::new(game2048::Game2048::new()),
-        Tools::CodePicture => match code_picture::CodePicture::new() {
-            Ok(t) => Box::new(t),
-            Err(e) => Box::new(InitError::new(e)),
-        },
         Tools::PolyglotPng => Box::new(polyglot_png::PolyglotPng::new()),
         _ => Box::new(blank::Blank),
     }
@@ -132,14 +126,13 @@ pub fn get_component_namelist() -> Vec<(String, Vec<(String, Tools)>)> {
     string_list.push(("Fake Data".to_string(), Tools::FakeDataGen));
     string_list.push(("Encode Tool".to_string(), Tools::EncodeTool));
     string_list.push(("JSON Tool".to_string(), Tools::JsonTool));
-    string_list.push(("Text Util".to_string(), Tools::TexctUtil));
+    string_list.push(("Text Util".to_string(), Tools::TextUtil));
     list.push(("String".to_string(), string_list));
 
     let mut file_list = Vec::new();
     file_list.push(("Vtracer".to_string(), Tools::Vtracer));
     file_list.push(("Byte Tool".to_string(), Tools::ByteTool));
     file_list.push(("Batch Process".to_string(), Tools::BatchProcess));
-    file_list.push(("Code Picture".to_string(), Tools::CodePicture));
     file_list.push(("Polyglot PNG".to_string(), Tools::PolyglotPng));
     list.push(("File".to_string(), file_list));
 

@@ -8,7 +8,7 @@ fn main() {
     let lua_preload = lua_dir.join("preload.lua");
     let lua_preload_from = Path::new("assets/preload.lua");
     fs::copy(&lua_preload_from, &lua_preload).unwrap();
-    embed_resource::compile("assets/icon.rc", embed_resource::NONE);
+    let _ = embed_resource::compile("assets/icon.rc", embed_resource::NONE);
 }
 
 fn get_output_path() -> &'static PathBuf {

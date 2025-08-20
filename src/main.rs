@@ -67,5 +67,6 @@ fn main() {
             cc.egui_ctx.set_theme(egui::Theme::Dark);
             Ok(Box::new(mainwindow::MainWindow::new()))
         }),
-    ).unwrap();
+    )
+    .unwrap();
 }

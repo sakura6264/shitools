@@ -187,8 +187,8 @@ impl Game2048 {
     fn move_board(&mut self, direct: Direction) {
         let (board_up, score_up) = self.move_up();
         let (board_down, score_down) = self.move_down();
-        let (board_left,score_left) = self.move_left();
-        let (board_right,score_right) = self.move_right();
+        let (board_left, score_left) = self.move_left();
+        let (board_right, score_right) = self.move_right();
         let (desire_board, desire_score) = match direct {
             Direction::Up => (board_up, score_up),
             Direction::Down => (board_down, score_down),
@@ -201,7 +201,10 @@ impl Game2048 {
             && board_left == self.board
             && board_right == self.board
         {
-            self.msg = Some(Msg::new(format!("Game Over! Score:{}", self.score), MsgType::Info));
+            self.msg = Some(Msg::new(
+                format!("Game Over! Score:{}", self.score),
+                MsgType::Info,
+            ));
             return;
         }
         if desire_board != self.board {

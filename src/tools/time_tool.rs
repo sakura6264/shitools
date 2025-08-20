@@ -235,7 +235,9 @@ impl ToolComponent for TimeTool {
             })
             .inner
         {
-            datetime_tochange = Some(chrono::DateTime::from_timestamp_nanos(self.nanosecond_timestamp));
+            datetime_tochange = Some(chrono::DateTime::from_timestamp_nanos(
+                self.nanosecond_timestamp,
+            ));
         }
         if let Some(ts) = datetime_tochange {
             self.date = ts.date_naive();
