@@ -67,7 +67,7 @@ flate2 = "1.0.28"
 memchr = "2.6.4"
 
 [build-dependencies]
-embed-resource = "*"
+winres = "*"
 
 
 [profile.release]

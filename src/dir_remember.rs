@@ -1,5 +1,5 @@
 use crate::utils::*;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 const DR_PATH: &str = "LASTOPENDIR.txt";
 
@@ -10,12 +10,12 @@ const DR_PATH: &str = "LASTOPENDIR.txt";
 ///
 /// # Returns
 /// * `Result<(), String>` - Success or error message
-pub fn set_dir(path: PathBuf) -> Result<(), String> {
+pub fn set_dir(path: impl AsRef<Path>) -> Result<(), String> {
+    let path = path.as_ref();
     // Verify the path is valid
     if !path.exists() {
         return Err(format!("Path does not exist: {}", path.to_string_lossy()));
     }
-
     if !path.is_dir() {
         return Err(format!(
             "Path is not a directory: {}",
@@ -30,14 +30,14 @@ pub fn set_dir(path: PathBuf) -> Result<(), String> {
     ensure_file(&dr_file)?;
 
     // Convert path to string and write to file
-    if let Some(path_str) = path.to_str() {
-        write_file(&dr_file, path_str)
-    } else {
-        Err(format!(
-            "Path contains invalid UTF-8 characters: {}",
-            path.to_string_lossy()
-        ))
-    }
+    path.to_str()
+        .ok_or_else(|| {
+            format!(
+                "Path contains invalid UTF-8 characters: {}",
+                path.to_string_lossy()
+            )
+        })
+        .and_then(|s| write_file(&dr_file, s))
 }
 
 /// Retrieves the last opened directory path from the configuration file
@@ -45,29 +45,11 @@ pub fn set_dir(path: PathBuf) -> Result<(), String> {
 /// # Returns
 /// * `Option<PathBuf>` - The directory path if available, None otherwise
 pub fn get_dir() -> Option<PathBuf> {
-    // Try to get the configuration file path
-    let dr_file = match sub_path(DR_PATH) {
-        Ok(path) => path,
-        Err(_) => return None,
-    };
-
-    // Check if the file exists
+    let dr_file = sub_path(DR_PATH).ok()?;
     if !dr_file.exists() {
         return None;
     }
-
-    // Read the file content
-    match read_file(&dr_file) {
-        Ok(content) => {
-            let path = PathBuf::from(content.trim());
-
-            // Verify the path still exists
-            if path.exists() && path.is_dir() {
-                Some(path)
-            } else {
-                None
-            }
-        }
-        Err(_) => None,
-    }
+    let content = read_file(&dr_file).ok()?;
+    let path = PathBuf::from(content.trim());
+    (path.exists() && path.is_dir()).then_some(path)
 }

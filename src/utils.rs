@@ -1,6 +1,6 @@
 use std::{
     hash::{Hash, Hasher},
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
 
 //
@@ -20,10 +20,15 @@ pub fn dir_path() -> Result<PathBuf, String> {
 }
 
 /// Returns a static reference to the directory of the executable
-/// This is cached for efficiency
-pub fn static_dir_path() -> &'static std::path::PathBuf {
+/// This is cached for efficiency. Falls back to current_dir or "." if needed.
+pub fn static_dir_path() -> &'static Path {
     static DIR: std::sync::OnceLock<PathBuf> = std::sync::OnceLock::new();
-    DIR.get_or_init(|| dir_path().unwrap())
+    DIR.get_or_init(|| {
+        dir_path()
+            .or_else(|_| std::env::current_dir().map_err(|e| e.to_string()))
+            .unwrap_or_else(|_| PathBuf::from("."))
+    })
+    .as_path()
 }
 
 /// Constructs a path relative to the executable directory
@@ -34,8 +39,8 @@ pub fn static_dir_path() -> &'static std::path::PathBuf {
 /// # Returns
 /// - `Ok(PathBuf)` - The constructed path
 /// - `Err(String)` - Error message if the path cannot be determined
-pub fn sub_path(sub: &str) -> Result<std::path::PathBuf, String> {
-    let mut path = static_dir_path().clone();
+pub fn sub_path(sub: &str) -> Result<PathBuf, String> {
+    let mut path = PathBuf::from(static_dir_path());
     path.push(sub);
     Ok(path)
 }
@@ -52,7 +57,8 @@ pub fn sub_path(sub: &str) -> Result<std::path::PathBuf, String> {
 /// # Returns
 /// - `Ok(())` - The directory exists or was created
 /// - `Err(String)` - Error message if the directory cannot be created
-pub fn ensure_dir(absolute: &PathBuf) -> Result<(), String> {
+pub fn ensure_dir(absolute: impl AsRef<Path>) -> Result<(), String> {
+    let absolute = absolute.as_ref();
     if absolute.exists() && !absolute.is_dir() {
         return Err(format!(
             "Path exists but is not a directory: {}",
@@ -74,7 +80,8 @@ pub fn ensure_dir(absolute: &PathBuf) -> Result<(), String> {
 /// # Returns
 /// - `Ok(())` - The file exists or was created
 /// - `Err(String)` - Error message if the file cannot be created
-pub fn ensure_file(absolute: &PathBuf) -> Result<(), String> {
+pub fn ensure_file(absolute: impl AsRef<Path>) -> Result<(), String> {
+    let absolute = absolute.as_ref();
     if absolute.exists() && !absolute.is_file() {
         return Err(format!(
             "Path exists but is not a file: {}",
@@ -95,7 +102,7 @@ pub fn ensure_file(absolute: &PathBuf) -> Result<(), String> {
 /// # Returns
 /// - `Ok(String)` - The contents of the file
 /// - `Err(String)` - Error message if the file cannot be read
-pub fn read_file(absolute: &PathBuf) -> Result<String, String> {
+pub fn read_file(absolute: impl AsRef<Path>) -> Result<String, String> {
     std::fs::read_to_string(absolute).map_err(|e| format!("Failed to read file: {}", e))
 }
 
@@ -108,7 +115,7 @@ pub fn read_file(absolute: &PathBuf) -> Result<String, String> {
 /// # Returns
 /// - `Ok(())` - The content was written successfully
 /// - `Err(String)` - Error message if the file cannot be written
-pub fn write_file(absolute: &PathBuf, content: &str) -> Result<(), String> {
+pub fn write_file(absolute: impl AsRef<Path>, content: &str) -> Result<(), String> {
     std::fs::write(absolute, content).map_err(|e| format!("Failed to write file: {}", e))
 }
 
@@ -202,7 +209,7 @@ pub fn get_seed() -> [u8; 32] {
 /// A formatted string with appropriate units (B, KB, MB, GB)
 pub fn format_mem(mem: usize) -> String {
     if mem < 1024 {
-        format!("{}", mem)
+        format!("{}B", mem)
     } else if mem < 1024 * 1024 {
         format!("{:.2}KB", mem as f64 / 1024.0)
     } else if mem < 1024 * 1024 * 1024 {

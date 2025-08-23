@@ -12,14 +12,14 @@ pub struct MainWindow {
 
 impl MainWindow {
     pub fn new() -> Self {
-        return Self {
+        Self {
             tool: Box::new(tools::Blank),
             toasts: egui_toast::Toasts::new()
                 .anchor(egui::Align2::LEFT_BOTTOM, (MARGIN, -MARGIN))
                 .direction(egui::Direction::BottomUp),
             file_dialog: None,
             current_dialog_id: 0,
-        };
+        }
     }
 }
 
@@ -90,7 +90,7 @@ impl eframe::App for MainWindow {
                         .set_file_op(Some((path.into(), self.current_dialog_id)));
 
                     // Save the directory path and handle any errors
-                    if let Err(err) = dir_remember::set_dir(dlg.directory().into()) {
+                    if let Err(err) = dir_remember::set_dir(dlg.directory()) {
                         self.toasts.add(egui_toast::Toast {
                             kind: egui_toast::ToastKind::Warning,
                             text: format!("Failed to save directory: {}", err).into(),
@@ -144,16 +144,13 @@ impl eframe::App for MainWindow {
 }
 
 fn filter_build(filter: Vec<String>) -> Box<dyn Fn(&str) -> bool + Send + Sync> {
+    // Pre-normalize filters to lowercase to avoid per-check allocations
+    let lowered: Vec<String> = filter.into_iter().map(|s| s.to_ascii_lowercase()).collect();
     Box::new(move |name| {
-        if filter.is_empty() {
+        if lowered.is_empty() {
             return true;
         }
-        let name_string = name.to_string().to_ascii_lowercase();
-        for f in filter.iter() {
-            if name_string.ends_with(f.to_ascii_lowercase().as_str()) {
-                return true;
-            }
-        }
-        return false;
+        let name_lower = name.to_ascii_lowercase();
+        lowered.iter().any(|f| name_lower.ends_with(f))
     })
 }

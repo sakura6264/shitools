@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
+#[cfg(windows)]
+use winres::WindowsResource;
 
 fn main() {
     let lua_dir = get_output_path().join("lua");
@@ -8,7 +10,13 @@ fn main() {
     let lua_preload = lua_dir.join("preload.lua");
     let lua_preload_from = Path::new("assets/preload.lua");
     fs::copy(&lua_preload_from, &lua_preload).unwrap();
-    let _ = embed_resource::compile("assets/icon.rc", embed_resource::NONE);
+    #[cfg(windows)]
+    {
+        WindowsResource::new()
+            .set_icon("assets/shitools.ico")
+            .compile()
+            .unwrap();
+    }
 }
 
 fn get_output_path() -> &'static PathBuf {
