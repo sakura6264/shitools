@@ -12,7 +12,7 @@ pub fn base64_decode(input: &str) -> Result<Vec<u8>, String> {
         Err(e) => {
             err_colector.push_str("BASE64_STANDARD_ERROR: ");
             err_colector.push_str(&e.to_string());
-            err_colector.push_str("\n");
+            err_colector.push('\n');
         }
     }
     match BASE64_URL_SAFE.decode(input) {
@@ -20,7 +20,7 @@ pub fn base64_decode(input: &str) -> Result<Vec<u8>, String> {
         Err(e) => {
             err_colector.push_str("BASE64_URL_SAFE_ERROR: ");
             err_colector.push_str(&e.to_string());
-            err_colector.push_str("\n");
+            err_colector.push('\n');
         }
     }
     match BASE64_STANDARD_NO_PAD.decode(input) {
@@ -28,7 +28,7 @@ pub fn base64_decode(input: &str) -> Result<Vec<u8>, String> {
         Err(e) => {
             err_colector.push_str("BASE64_STANDARD_NO_PAD_ERROR: ");
             err_colector.push_str(&e.to_string());
-            err_colector.push_str("\n");
+            err_colector.push('\n');
         }
     }
     match BASE64_URL_SAFE_NO_PAD.decode(input) {
@@ -36,7 +36,7 @@ pub fn base64_decode(input: &str) -> Result<Vec<u8>, String> {
         Err(e) => {
             err_colector.push_str("BASE64_URL_SAFE_NO_PAD_ERROR: ");
             err_colector.push_str(&e.to_string());
-            err_colector.push_str("\n");
+            err_colector.push('\n');
         }
     }
     Err(err_colector)
@@ -62,5 +62,5 @@ pub fn try_ascii(input: &[u8]) -> String {
             buffer.push(input[i]);
         }
     }
-    return String::from_utf8(buffer).unwrap();
+    String::from_utf8(buffer).unwrap()
 }

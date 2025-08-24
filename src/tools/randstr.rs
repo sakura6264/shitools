@@ -37,7 +37,7 @@ impl ToolComponent for RandStr {
                     let charset: Vec<char> = self.charset.chars().collect();
                     let mut output = String::new();
                     for _ in 0..self.len {
-                        let index: usize = rng.gen_range(0..charset.len());
+                        let index: usize = rng.random_range(0..charset.len());
                         output.push(charset[index]);
                     }
                     self.output = output;

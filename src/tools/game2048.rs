@@ -26,8 +26,8 @@ impl Game2048 {
     pub fn new() -> Self {
         let mut rng = ChaChaRng::from_seed(crate::get_seed());
         let mut board = [[0; 4]; 4];
-        let first_1: usize = rng.gen_range(0..16);
-        let mut second_1: usize = rng.gen_range(0..15);
+        let first_1: usize = rng.random_range(0..16);
+        let mut second_1: usize = rng.random_range(0..15);
         if second_1 >= first_1 {
             second_1 += 1;
         }
@@ -56,7 +56,7 @@ impl Game2048 {
                         let last = filled.pop().unwrap();
                         let new_value = last << 1;
                         filled.push(new_value);
-                        score = score + new_value;
+                        score += new_value;
                     } else {
                         filled.push(value);
                     }
@@ -82,7 +82,7 @@ impl Game2048 {
                         let last = filled.pop().unwrap();
                         let new_value = last << 1;
                         filled.push(new_value);
-                        score = score + new_value;
+                        score += new_value;
                     } else {
                         filled.push(value);
                     }
@@ -108,7 +108,7 @@ impl Game2048 {
                         let last = filled.pop().unwrap();
                         let new_value = last << 1;
                         filled.push(new_value);
-                        score = score + new_value;
+                        score += new_value;
                     } else {
                         filled.push(value);
                     }
@@ -134,7 +134,7 @@ impl Game2048 {
                         let last = filled.pop().unwrap();
                         let new_value = last << 1;
                         filled.push(new_value);
-                        score = score + new_value;
+                        score += new_value;
                     } else {
                         filled.push(value);
                     }
@@ -161,13 +161,13 @@ impl Game2048 {
             return;
         }
         let to_add = self.random_addable();
-        let index = self.rng.gen_range(0..emptys.len());
+        let index = self.rng.random_range(0..emptys.len());
         let (x, y) = emptys[index];
         self.board[x][y] = to_add;
     }
     fn random_addable(&mut self) -> usize {
-        let random_num: usize = self.rng.gen();
-        random_num & (!random_num + 1)
+        let random_num: u64 = self.rng.random();
+        (random_num & (!random_num + 1)) as usize
     }
     fn get_color(&mut self, value: usize) -> egui::Color32 {
         match value {
@@ -209,7 +209,7 @@ impl Game2048 {
         }
         if desire_board != self.board {
             self.board = desire_board;
-            self.score = self.score + desire_score;
+            self.score += desire_score;
             self.add_new();
         }
     }

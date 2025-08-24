@@ -1,7 +1,6 @@
 use eframe::egui;
 use std::sync::mpsc;
 use std::thread;
-use vtracer;
 
 use super::*;
 
@@ -210,7 +209,7 @@ impl ToolComponent for Vtracer {
                         self.recv = Some(rx);
                         self.hthread = Some(thread::spawn(move || {
                             if let Err(e) = vtracer::convert_image_to_svg(&input, &output, cfg) {
-                                tx.send(Msg::new(e.into(), MsgType::Error)).unwrap();
+                                tx.send(Msg::new(e, MsgType::Error)).unwrap();
                             } else {
                                 tx.send(Msg::new("Done".into(), MsgType::Info)).unwrap();
                             }

@@ -165,10 +165,8 @@ impl ToolComponent for TextUtil {
                         if ui.button("<<").clicked() {
                             self.current_page = 0;
                         }
-                        if ui.button("<").clicked() {
-                            if self.current_page > 0 {
-                                self.current_page -= 1;
-                            }
+                        if ui.button("<").clicked() && self.current_page > 0 {
+                            self.current_page -= 1;
                         }
                         ui.add(
                             egui::DragValue::new(&mut self.current_page)
@@ -176,10 +174,10 @@ impl ToolComponent for TextUtil {
                                 .range(0..=self.texts.len() / self.page_size),
                         );
                         ui.label(format!("/{}", self.texts.len() / self.page_size));
-                        if ui.button(">").clicked() {
-                            if self.current_page < self.texts.len() / self.page_size {
-                                self.current_page += 1;
-                            }
+                        if ui.button(">").clicked()
+                            && self.current_page < self.texts.len() / self.page_size
+                        {
+                            self.current_page += 1;
                         }
                         if ui.button(">>").clicked() {
                             self.current_page = self.texts.len() / self.page_size;
@@ -225,10 +223,8 @@ impl ToolComponent for TextUtil {
                         if ui.button("<<").clicked() {
                             self.against_page = 0;
                         }
-                        if ui.button("<").clicked() {
-                            if self.against_page > 0 {
-                                self.against_page -= 1;
-                            }
+                        if ui.button("<").clicked() && self.against_page > 0 {
+                            self.against_page -= 1;
                         }
                         ui.add(
                             egui::DragValue::new(&mut self.against_page)
@@ -236,10 +232,10 @@ impl ToolComponent for TextUtil {
                                 .range(0..=self.againsts.len() / self.against_page_size),
                         );
                         ui.label(format!("/{}", self.againsts.len() / self.against_page_size));
-                        if ui.button(">").clicked() {
-                            if self.against_page < self.againsts.len() / self.against_page_size {
-                                self.against_page += 1;
-                            }
+                        if ui.button(">").clicked()
+                            && self.against_page < self.againsts.len() / self.against_page_size
+                        {
+                            self.against_page += 1;
                         }
                         if ui.button(">>").clicked() {
                             self.against_page = self.againsts.len() / self.against_page_size;

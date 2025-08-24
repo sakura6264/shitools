@@ -247,7 +247,7 @@ impl ToolComponent for BoolLogic {
                 let mut input = BTreeMap::new();
                 let mut index = 0;
                 for i in self.truthtable.vars.iter() {
-                    input.insert(i.clone(), false);
+                    input.insert(*i, false);
                 }
                 for _ in 0..2usize.pow(input.len() as u32) {
                     body.row(30.0, |mut row| {

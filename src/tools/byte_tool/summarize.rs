@@ -11,7 +11,7 @@ fn count(input: &[u8]) -> [usize; U8ALL] {
     for i in input {
         buff[*i as usize] += 1;
     }
-    return buff;
+    buff
 }
 
 fn max(input: &[usize]) -> usize {
@@ -21,17 +21,17 @@ fn max(input: &[usize]) -> usize {
             max = i;
         }
     }
-    return max;
+    max
 }
 
 pub fn find_max_used(input: &[u8]) -> u8 {
     let buff = count(input);
-    return max(&buff) as u8;
+    max(&buff) as u8
 }
 
 pub fn find_num(input: &[u8], b: u8) -> usize {
     let buff = count(input);
-    return buff[b as usize];
+    buff[b as usize]
 }
 
 pub fn calc_00(input: &[u8]) -> usize {
@@ -41,7 +41,7 @@ pub fn calc_00(input: &[u8]) -> usize {
             count += 1;
         }
     }
-    return count;
+    count
 }
 
 pub fn calc_ff(input: &[u8]) -> usize {
@@ -51,7 +51,7 @@ pub fn calc_ff(input: &[u8]) -> usize {
             count += 1;
         }
     }
-    return count;
+    count
 }
 
 pub fn xor(input: &[u8], key: &[u8]) -> String {
@@ -59,7 +59,7 @@ pub fn xor(input: &[u8], key: &[u8]) -> String {
     for i in 0..input.len() {
         buff.push(input[i] ^ key[i % key.len()]);
     }
-    return hex::encode(buff);
+    hex::encode(buff)
 }
 
 pub fn format_guess(input: &[u8]) -> String {
@@ -71,7 +71,7 @@ pub fn format_guess(input: &[u8]) -> String {
     };
     let temp_path = crate::sub_path(TEMP_FILE).unwrap();
     let _ = std::fs::remove_file(&temp_path);
-    return return_val;
+    return_val
 }
 
 fn magika_wrapper(input: &[u8]) -> Result<String, String> {

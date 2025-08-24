@@ -19,11 +19,11 @@ pub fn tokenize(expr: &str) -> Result<Vec<Token>, String> {
     let mut tokens: Vec<Token> = Vec::new();
     let mut chars = expr.chars();
     let mut c = chars.next();
-    while c != None {
+    while c.is_some() {
         match c {
             Some(' ') => {}
             Some('a'..='z') | Some('A'..='Z') => {
-                if tokens.len() > 0 {
+                if !tokens.is_empty() {
                     match tokens[tokens.len() - 1] {
                         Token::Var(_) | Token::RB | Token::Not | Token::Number(_) => {
                             tokens.push(Token::And)
@@ -36,7 +36,7 @@ pub fn tokenize(expr: &str) -> Result<Vec<Token>, String> {
             Some('\'') => tokens.push(Token::Not),
             Some('+') => tokens.push(Token::Or),
             Some('(') => {
-                if tokens.len() > 0 {
+                if !tokens.is_empty() {
                     match tokens[tokens.len() - 1] {
                         Token::Var(_) | Token::RB | Token::Not | Token::Number(_) => {
                             tokens.push(Token::And)
@@ -76,7 +76,7 @@ pub fn getstackop(tokens: &Vec<Token>) -> Result<Vec<StackOp>, String> {
             Token::Number(b) => stackops.push(Token::Number(b)),
             Token::Not => stack.push(Token::Not),
             Token::And => {
-                while stack.len() > 0
+                while !stack.is_empty()
                     && stack[stack.len() - 1] != Token::Or
                     && stack[stack.len() - 1] != Token::LB
                 {
@@ -85,17 +85,17 @@ pub fn getstackop(tokens: &Vec<Token>) -> Result<Vec<StackOp>, String> {
                 stack.push(Token::And);
             }
             Token::Or => {
-                while stack.len() > 0 && stack[stack.len() - 1] != Token::LB {
+                while !stack.is_empty() && stack[stack.len() - 1] != Token::LB {
                     stackops.push(stack.pop().ok_or("Stack is empty".to_string())?);
                 }
                 stack.push(Token::Or);
             }
             Token::LB => stack.push(Token::LB),
             Token::RB => {
-                while stack.len() > 0 && stack[stack.len() - 1] != Token::LB {
+                while !stack.is_empty() && stack[stack.len() - 1] != Token::LB {
                     stackops.push(stack.pop().ok_or("Stack is empty".to_string())?);
                 }
-                if stack.len() == 0 {
+                if stack.is_empty() {
                     return Err("Invalid expression".to_string());
                 }
                 stack.pop();
@@ -103,21 +103,21 @@ pub fn getstackop(tokens: &Vec<Token>) -> Result<Vec<StackOp>, String> {
         }
         i += 1;
     }
-    while stack.len() > 0 {
+    while !stack.is_empty() {
         stackops.push(stack.pop().ok_or("Stack is empty".to_string())?);
     }
     let result = stackops
         .iter()
         .map(|x| match x {
-            Token::Var(c) => StackOp::Var(c.clone()),
+            Token::Var(c) => StackOp::Var(*c),
             Token::Not => StackOp::Not,
             Token::And => StackOp::And,
             Token::Or => StackOp::Or,
-            Token::Number(b) => StackOp::Number(b.clone()),
+            Token::Number(b) => StackOp::Number(*b),
             _ => unreachable!(),
         })
         .collect();
-    return Ok(result);
+    Ok(result)
 }
 pub fn calculate(stackops: &Vec<StackOp>, vars: &BTreeMap<char, bool>) -> Result<bool, String> {
     // use stack to calculate the postfix expression
@@ -127,14 +127,14 @@ pub fn calculate(stackops: &Vec<StackOp>, vars: &BTreeMap<char, bool>) -> Result
         match stackops[i] {
             StackOp::Var(c) => {
                 stack.push(
-                    vars.get(&c)
-                        .ok_or(format!("Variable {} is not defined", c))?
-                        .clone(),
+                    *vars
+                        .get(&c)
+                        .ok_or(format!("Variable {} is not defined", c))?,
                 );
             }
             StackOp::Number(b) => stack.push(b),
             StackOp::Not => {
-                if stack.len() == 0 {
+                if stack.is_empty() {
                     return Err("Invalid expression".to_string());
                 }
                 let temp = stack.pop().ok_or("Stack is empty".to_string())?;
@@ -152,8 +152,8 @@ pub fn calculate(stackops: &Vec<StackOp>, vars: &BTreeMap<char, bool>) -> Result
                 if stack.len() < 2 {
                     return Err("Invalid expression".to_string());
                 }
-                let a = stack.pop().ok_or("Stack is empty".to_string())?.clone();
-                let b = stack.pop().ok_or("Stack is empty".to_string())?.clone();
+                let a = stack.pop().ok_or("Stack is empty".to_string())?;
+                let b = stack.pop().ok_or("Stack is empty".to_string())?;
                 stack.push(a || b);
             }
         }
@@ -162,20 +162,17 @@ pub fn calculate(stackops: &Vec<StackOp>, vars: &BTreeMap<char, bool>) -> Result
     if stack.len() != 1 {
         return Err("Invalid expression".to_string());
     }
-    return Ok(stack[0]);
+    Ok(stack[0])
 }
 pub fn getvars(stackops: &Vec<StackOp>) -> Vec<char> {
     let mut vars = Vec::new();
     for stackop in stackops {
-        match stackop {
-            StackOp::Var(c) => {
-                vars.push(c.clone());
-            }
-            _ => {}
+        if let StackOp::Var(c) = stackop {
+            vars.push(*c);
         }
     }
     vars.sort();
-    return vars;
+    vars
 }
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum TruthTableResult {
@@ -216,17 +213,17 @@ impl TruthTable {
             }
             t.push(row);
         }
-        return Some(TruthTable {
+        Some(TruthTable {
             vars: CHARLIST[0..inputs].to_vec(),
             outputs: CHARLIST[inputs..inputs + output].to_vec(),
             table: t,
-        });
+        })
     }
     pub fn calc(
         exprs: &BTreeMap<char, String>,
         consts: &Vec<String>,
     ) -> Result<TruthTable, String> {
-        if exprs.len() == 0 {
+        if exprs.is_empty() {
             return Err("No expressions".to_string());
         }
         let expr_stackop = exprs
@@ -234,7 +231,7 @@ impl TruthTable {
             .map(|(key, value)| {
                 let tokens = tokenize(value)?;
                 let stackop = getstackop(&tokens)?;
-                Ok((key.clone(), stackop))
+                Ok((*key, stackop))
             })
             .collect::<Result<BTreeMap<char, Vec<StackOp>>, String>>()?;
         let consts_stackop = consts
@@ -253,12 +250,12 @@ impl TruthTable {
                     inputs.push(vars);
                 }
             }
-            outputs.push(key.clone());
+            outputs.push(*key);
         }
         let mut truth = Vec::new();
         let mut bool_map = BTreeMap::new();
         for input in inputs.iter() {
-            bool_map.insert(input.clone(), false);
+            bool_map.insert(*input, false);
         }
         for _ in 0..2usize.pow(inputs.len() as u32) {
             let mut results = Vec::new();
@@ -269,7 +266,7 @@ impl TruthTable {
                         continue;
                     }
                 }
-                let r = calculate(&value, &bool_map)?;
+                let r = calculate(value, &bool_map)?;
                 results.push(TruthTableResult::Val(r));
             }
             truth.push(results);
@@ -285,7 +282,7 @@ impl TruthTable {
 
 #[inline]
 pub fn get_bit(mut value: u32, pos: u32) -> bool {
-    value = value >> pos;
+    value >>= pos;
     (value & 0x1) != 0
 }
 
@@ -325,12 +322,10 @@ impl Term {
 
         for _ in 0..names.len() {
             // literal mode (write the term using letters)
-            if literal_mode {
-                if mask & 1 == 0 {
-                    result.insert(0, names[index]);
-                    if value & 1 == 0 {
-                        result.insert(1, '\'');
-                    }
+            if literal_mode && mask & 1 == 0 {
+                result.insert(0, names[index]);
+                if value & 1 == 0 {
+                    result.insert(1, '\'');
                 }
             }
 
@@ -349,7 +344,7 @@ impl Term {
             index += 1;
         }
 
-        return result;
+        result
     }
 
     fn terms_to_string<'a>(
@@ -358,11 +353,11 @@ impl Term {
         literal_mode: bool,
     ) -> String {
         let result: String = terms
-            .map(|term| -> String { term.to_string(&names, literal_mode) })
+            .map(|term| -> String { term.to_string(names, literal_mode) })
             .collect::<Vec<String>>()
             .join("+");
 
-        return result;
+        result
     }
 }
 
@@ -410,8 +405,8 @@ impl BinaryFunction {
 
     fn print_implicants(&self, implicants: &HashSet<Term>) {
         for implicant in implicants {
-            print!(
-                "value={:#08b} mask={:#08b}\n",
+            println!(
+                "value={:#08b} mask={:#08b}",
                 implicant.value, implicant.mask
             );
         }
@@ -425,8 +420,8 @@ impl BinaryFunction {
             if (mask & 1) != 0 && (value & 1) != 0 {
                 result += 1;
             }
-            value = value >> 1;
-            mask = mask >> 1;
+            value >>= 1;
+            mask >>= 1;
         }
         result
     }
@@ -510,7 +505,7 @@ pub fn qmc_find_prime_imp(
         result = qmc_find_prime_imp(f, &result).0;
     }
 
-    return (result, simplified_num);
+    (result, simplified_num)
 }
 
 pub fn qmc_find_prime_imp_from_func(f: &BinaryFunction) -> HashSet<Term> {
@@ -519,7 +514,7 @@ pub fn qmc_find_prime_imp_from_func(f: &BinaryFunction) -> HashSet<Term> {
     imp.extend(f.terms.iter().cloned());
     imp.extend(f.dont_care.iter().cloned());
 
-    return qmc_find_prime_imp(&f, &imp).0;
+    qmc_find_prime_imp(f, &imp).0
 }
 
 pub fn qmc_dominance_crit(
@@ -651,7 +646,7 @@ pub fn qmc_simplify(truthtable: &TruthTable) -> BTreeMap<char, String> {
         let mut bool_map = BTreeMap::new();
         let mut f = BinaryFunction::new(truthtable.vars.len());
         for i in truthtable.vars.iter() {
-            bool_map.insert(i.clone(), false);
+            bool_map.insert(*i, false);
         }
         for j in 0..2usize.pow(truthtable.vars.len() as u32) {
             let r = truthtable.table[j][output_index].clone();
@@ -660,7 +655,7 @@ pub fn qmc_simplify(truthtable: &TruthTable) -> BTreeMap<char, String> {
                 TruthTableResult::Val(true) => {
                     let mut bin = 0;
                     for (_, v) in bool_map.iter().rev() {
-                        bin = bin << 1;
+                        bin <<= 1;
                         if *v {
                             bin += 1;
                         }
@@ -670,7 +665,7 @@ pub fn qmc_simplify(truthtable: &TruthTable) -> BTreeMap<char, String> {
                 TruthTableResult::NotCare => {
                     let mut bin = 0;
                     for (_, v) in bool_map.iter().rev() {
-                        bin = bin << 1;
+                        bin <<= 1;
                         if *v {
                             bin += 1;
                         }
@@ -695,10 +690,10 @@ pub fn qmc_simplify(truthtable: &TruthTable) -> BTreeMap<char, String> {
                 }
             }
         }
-        result.insert(truthtable.outputs[output_index].clone(), s);
+        result.insert(truthtable.outputs[output_index], s);
         output_index += 1;
     }
-    return result;
+    result
 }
 #[derive(Clone, PartialEq, Debug)]
 pub struct Graph {

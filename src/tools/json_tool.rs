@@ -110,20 +110,14 @@ impl ToolComponent for JsonTool {
                 ui.vertical(|ui| {
                     ui.horizontal(|ui| {
                         ui.label("JSON");
-                        if ui.button("Export Formatted").clicked() {
-                            if self.display.is_ok() {
-                                self.op_state = FileOpState::ExportFormatted;
-                            }
+                        if ui.button("Export Formatted").clicked() && self.display.is_ok() {
+                            self.op_state = FileOpState::ExportFormatted;
                         }
-                        if ui.button("Export Plain").clicked() {
-                            if self.display.is_ok() {
-                                self.op_state = FileOpState::ExportPlain;
-                            }
+                        if ui.button("Export Plain").clicked() && self.display.is_ok() {
+                            self.op_state = FileOpState::ExportPlain;
                         }
-                        if ui.button("To Yaml").clicked() {
-                            if self.display.is_ok() {
-                                self.op_state = FileOpState::ToYaml;
-                            }
+                        if ui.button("To Yaml").clicked() && self.display.is_ok() {
+                            self.op_state = FileOpState::ToYaml;
                         }
                     });
                     match &self.display {

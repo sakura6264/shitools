@@ -1,14 +1,14 @@
 use digest::Digest;
 
 pub fn asconhash(input: &[u8]) -> String {
-    let mut hasher = ascon_hash::AsconHash::new();
+    let mut hasher = ascon_hash::AsconHash256::new();
     hasher.update(input);
     let result = hasher.finalize();
     hex::encode(result)
 }
 
 pub fn asconahash(input: &[u8]) -> String {
-    let mut hasher = ascon_hash::AsconAHash::new();
+    let mut hasher = ascon_hash::AsconHash256::new();
     hasher.update(input);
     let result = hasher.finalize();
     hex::encode(result)

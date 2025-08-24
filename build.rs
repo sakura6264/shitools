@@ -9,7 +9,7 @@ fn main() {
     fs::create_dir_all(&lua_dir).unwrap();
     let lua_preload = lua_dir.join("preload.lua");
     let lua_preload_from = Path::new("assets/preload.lua");
-    fs::copy(&lua_preload_from, &lua_preload).unwrap();
+    fs::copy(lua_preload_from, &lua_preload).unwrap();
     #[cfg(windows)]
     {
         WindowsResource::new()

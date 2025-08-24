@@ -21,7 +21,7 @@ use std::sync::OnceLock;
 
 pub fn static_namelist() -> &'static Vec<(String, Vec<(String, Tools)>)> {
     static ONCE: OnceLock<Vec<(String, Vec<(String, Tools)>)>> = OnceLock::new();
-    ONCE.get_or_init(|| get_component_namelist())
+    ONCE.get_or_init(get_component_namelist)
 }
 
 #[derive(PartialEq, Eq, Hash, Clone)]
@@ -141,7 +141,7 @@ pub fn get_component_namelist() -> Vec<(String, Vec<(String, Tools)>)> {
     about_list.push(("2048".to_string(), Tools::Game2048));
     list.push(("About".to_string(), about_list));
 
-    return list;
+    list
 }
 
 #[derive(PartialEq, Eq, Hash, Clone)]

@@ -295,10 +295,8 @@ impl ToolComponent for BatchProcess {
                         if ui.button("<<").clicked() {
                             self.from_page = 0;
                         }
-                        if ui.button("<").clicked() {
-                            if self.from_page > 0 {
-                                self.from_page -= 1;
-                            }
+                        if ui.button("<").clicked() && self.from_page > 0 {
+                            self.from_page -= 1;
                         }
                         ui.add(
                             egui::DragValue::new(&mut self.from_page)
@@ -306,10 +304,10 @@ impl ToolComponent for BatchProcess {
                                 .range(0..=self.from_list.len() / self.from_page_size),
                         );
                         ui.label(format!("/{}", self.from_list.len() / self.from_page_size));
-                        if ui.button(">").clicked() {
-                            if self.from_page < self.from_list.len() / self.from_page_size {
-                                self.from_page += 1;
-                            }
+                        if ui.button(">").clicked()
+                            && self.from_page < self.from_list.len() / self.from_page_size
+                        {
+                            self.from_page += 1;
                         }
                         if ui.button(">>").clicked() {
                             self.from_page = self.from_list.len() / self.from_page_size;
@@ -339,10 +337,8 @@ impl ToolComponent for BatchProcess {
                         if ui.button("<<").clicked() {
                             self.to_page = 0;
                         }
-                        if ui.button("<").clicked() {
-                            if self.to_page > 0 {
-                                self.to_page -= 1;
-                            }
+                        if ui.button("<").clicked() && self.to_page > 0 {
+                            self.to_page -= 1;
                         }
                         ui.add(
                             egui::DragValue::new(&mut self.to_page)
@@ -350,10 +346,10 @@ impl ToolComponent for BatchProcess {
                                 .range(0..=self.to_list.len() / self.to_page_size),
                         );
                         ui.label(format!("/{}", self.to_list.len() / self.to_page_size));
-                        if ui.button(">").clicked() {
-                            if self.to_page < self.to_list.len() / self.to_page_size {
-                                self.to_page += 1;
-                            }
+                        if ui.button(">").clicked()
+                            && self.to_page < self.to_list.len() / self.to_page_size
+                        {
+                            self.to_page += 1;
                         }
                         if ui.button(">>").clicked() {
                             self.to_page = self.to_list.len() / self.to_page_size;
